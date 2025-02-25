@@ -52,7 +52,7 @@ export default function TableList({ onOpen }) {
                                     <div className="w-12 h-12 border-2 border-gray-200 rounded-lg overflow-hidden">
                                         {product.imageUrl ? (
                                             <img 
-                                                src={product.imageUrl} 
+                                                src={`/assets/products/${product.imageUrl}`}
                                                 alt={product.name}
                                                 className="w-full h-full object-cover"
                                             />
