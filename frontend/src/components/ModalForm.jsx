@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 // ModalForm.js
 export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) {
-    const [formData, setFormData] = useState({
+    const initialFormState = {
         name: '',
         description: '',
         sku: '',
@@ -11,11 +11,18 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
         price: '',
         inStock: false,
         imageUrl: '',
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormState);
     const [imagePreview, setImagePreview] = useState(null);
 
     useEffect(() => {
-        if (product && mode === 'edit') {
+        if (mode === 'add') {
+            // Limpiar el formulario cuando se abre en modo 'add'
+            setFormData(initialFormState);
+            setImagePreview(null);
+        } else if (product && mode === 'edit') {
+            // Llenar el formulario con los datos del producto en modo 'edit'
             setFormData({
                 name: product.name || '',
                 description: product.description || '',
@@ -29,7 +36,7 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 setImagePreview(`/assets/products/${product.imageUrl}`);
             }
         }
-    }, [product, mode]);
+    }, [mode, product, isOpen]); // Agregamos isOpen como dependencia
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
