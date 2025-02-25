@@ -1,23 +1,8 @@
 import { useState, useEffect } from 'react';
 
-export default function TableList({ onOpen, onDelete }) {
-    const [products, setProducts] = useState([]);
+export default function TableList({ products, onOpen, onDelete }) {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/api/products');
-            const data = await response.json();
-            setProducts(data);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -70,7 +55,6 @@ export default function TableList({ onOpen, onDelete }) {
             await onDelete(productToDelete._id);
             setShowConfirmDialog(false);
             setProductToDelete(null);
-            fetchProducts(); // Recargar la lista después de eliminar
         }
     };
 

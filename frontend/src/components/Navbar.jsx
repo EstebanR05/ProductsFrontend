@@ -1,4 +1,9 @@
-export default function Navbar({ onOpen }) {
+export default function Navbar({ onOpen, onSearch }) {
+    const handleSearch = (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        onSearch(searchTerm);
+    };
+
     return (
         <>
             <div className="navbar bg-base-100">
@@ -7,11 +12,16 @@ export default function Navbar({ onOpen }) {
                 </div>
                 <div className="navbar-center">
                     <div className="form-control">
-                        <input type="text" placeholder="Search" className=" input input-bordered w-48 md:w-auto" />
+                        <input 
+                            type="text" 
+                            placeholder="Search by name, SKU or brand..." 
+                            className="input input-bordered w-64 md:w-96"
+                            onChange={handleSearch}
+                        />
                     </div>
                 </div>
                 <div className="navbar-end">
-                    <button onClick={onOpen} className="btn btn-primary">Add Client</button>
+                    <button onClick={onOpen} className="btn btn-primary">Add Product</button>
                 </div>
             </div>
         </>
