@@ -86,7 +86,12 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
     return (
         <dialog id="my_modal_3" className="modal bg-black/40" open={isOpen}>
             <div className="modal-box max-w-3xl">
-                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={onClose}>✕</button>
+                <button 
+                    className="btn btn-sm btn-circle bg-base-200 hover:bg-base-300 text-base-content border-0 absolute right-2 top-2" 
+                    onClick={onClose}
+                >
+                    ✕
+                </button>
                 <h3 className="font-bold text-lg py-4">{mode === 'edit' ? 'Edit Product' : 'Add New Product'}</h3>
                 
                 <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-6">
@@ -229,10 +234,17 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
 
                     {/* Botones de acción */}
                     <div className="col-span-3 flex justify-end gap-2 mt-4">
-                        <button type="button" className="btn btn-ghost" onClick={onClose}>
+                        <button 
+                            type="button" 
+                            className="btn bg-base-200 hover:bg-base-300 text-base-content border-0 transition-colors"
+                            onClick={onClose}
+                        >
                             Cancel
                         </button>
-                        <button type="submit" className="btn btn-primary">
+                        <button 
+                            type="submit" 
+                            className="btn bg-primary/10 text-primary hover:bg-primary/20 border-0 transition-colors"
+                        >
                             {mode === 'edit' ? 'Save Changes' : 'Create Product'}
                         </button>
                     </div>
