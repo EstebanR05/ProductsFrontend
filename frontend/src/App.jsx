@@ -51,11 +51,37 @@ function App() {
         }
     };
 
+    const handleDelete = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:4000/api/products/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Error deleting product');
+            }
+
+            alert('Product deleted successfully');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message || 'Error deleting product');
+        }
+    };
+
     return (
         <>
             <div className="py-5 px-5">
                 <Navbar onOpen={() => handleOpen('add')} />
-                <TableList onOpen={(product) => handleOpen('edit', product)} />
+                <TableList 
+                    onOpen={(product) => handleOpen('edit', product)}
+                    onDelete={handleDelete}
+                />
                 <ModalForm
                     isOpen={isOpen}
                     onClose={() => {

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 
-export default function TableList({ onOpen }) {
+export default function TableList({ onOpen, onDelete }) {
     const [products, setProducts] = useState([]);
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [productToDelete, setProductToDelete] = useState(null);
 
     useEffect(() => {
         fetchProducts();
@@ -58,6 +60,20 @@ export default function TableList({ onOpen }) {
         );
     };
 
+    const handleDeleteClick = (product) => {
+        setProductToDelete(product);
+        setShowConfirmDialog(true);
+    };
+
+    const confirmDelete = async () => {
+        if (productToDelete) {
+            await onDelete(productToDelete._id);
+            setShowConfirmDialog(false);
+            setProductToDelete(null);
+            fetchProducts(); // Recargar la lista después de eliminar
+        }
+    };
+
     return (
         <>
             <div className="overflow-x-auto mt-10">
@@ -107,7 +123,10 @@ export default function TableList({ onOpen }) {
                                     >
                                         Update
                                     </button>
-                                    <button className="btn btn-sm btn-accent">
+                                    <button 
+                                        className="btn btn-sm btn-error"
+                                        onClick={() => handleDeleteClick(product)}
+                                    >
                                         Delete
                                     </button>
                                 </td>
@@ -116,6 +135,31 @@ export default function TableList({ onOpen }) {
                     </tbody>
                 </table>
             </div>
+
+            {/* Modal de confirmación */}
+            <dialog id="confirm_dialog" className={`modal ${showConfirmDialog ? 'modal-open' : ''}`}>
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Confirm Delete</h3>
+                    <p className="py-4">
+                        Are you sure you want to delete "{productToDelete?.name}"?
+                        This action cannot be undone.
+                    </p>
+                    <div className="modal-action">
+                        <button 
+                            className="btn btn-ghost"
+                            onClick={() => setShowConfirmDialog(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            className="btn btn-error"
+                            onClick={confirmDelete}
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </dialog>
         </>
     );
 }
