@@ -18,11 +18,9 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
 
     useEffect(() => {
         if (mode === 'add') {
-            // Limpiar el formulario cuando se abre en modo 'add'
             setFormData(initialFormState);
             setImagePreview(null);
         } else if (product && mode === 'edit') {
-            // Llenar el formulario con los datos del producto en modo 'edit'
             setFormData({
                 name: product.name || '',
                 description: product.description || '',
@@ -32,11 +30,16 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 inStock: product.inStock || false,
                 imageUrl: product.imageUrl || '',
             });
+
+            // Cargar la imagen del localStorage si existe
             if (product.imageUrl) {
-                setImagePreview(`/assets/products/${product.imageUrl}`);
+                const storedImage = localStorage.getItem(`product-image-${product.imageUrl}`);
+                if (storedImage) {
+                    setImagePreview(storedImage);
+                }
             }
         }
-    }, [mode, product, isOpen]); // Agregamos isOpen como dependencia
+    }, [mode, product, isOpen]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -49,25 +52,29 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Crear un nombre de archivo único
-            const fileName = `${Date.now()}-${file.name}`;
-            
-            // Guardar la URL de la imagen en el estado
-            setFormData(prev => ({
-                ...prev,
-                imageUrl: fileName
-            }));
-
-            // Crear preview de la imagen
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-
-            // Copiar el archivo a la carpeta public/assets/products
-            // Nota: Esto es una simulación, en realidad necesitarías mover el archivo manualmente
-            console.log('Archivo a copiar en public/assets/products/:', fileName);
+            try {
+                // Crear un nombre de archivo único
+                const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+                
+                // Crear preview y guardar la imagen como base64
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result;
+                    // Guardar en localStorage para persistencia
+                    localStorage.setItem(`product-image-${fileName}`, base64String);
+                    
+                    setImagePreview(base64String);
+                    setFormData(prev => ({
+                        ...prev,
+                        imageUrl: fileName
+                    }));
+                };
+                reader.readAsDataURL(file);
+                
+            } catch (error) {
+                console.error('Error processing image:', error);
+                alert('Error processing image');
+            }
         }
     };
 
@@ -84,30 +91,40 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 
                 <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
                     <div className="col-span-2 flex justify-center mb-4">
-                        <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden flex items-center justify-center relative group">
-                            {imagePreview ? (
-                                <img 
-                                    src={imagePreview} 
-                                    alt="Preview" 
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
+                        <label className="cursor-pointer">
+                            <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden relative group hover:border-primary">
+                                <div className="w-full h-full flex items-center justify-center">
+                                    {imagePreview ? (
+                                        <img 
+                                            src={imagePreview}
+                                            alt="Preview" 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span className="text-sm text-gray-500">Click to upload</span>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                                className="absolute inset-0 opacity-0 cursor-pointer"
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                <span className="text-white text-sm">Change Image</span>
+
+                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+                                    <span className="text-white text-sm">Change Image</span>
+                                </div>
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
                             </div>
-                        </div>
+                        </label>
                     </div>
 
                     <div className="form-control">
