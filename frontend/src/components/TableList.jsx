@@ -27,7 +27,7 @@ export default function TableList({ products, onOpen, onDelete }) {
         }, [imageUrl]);
 
         return (
-            <div className="w-12 h-12 border-2 border-gray-200 rounded-lg overflow-hidden">
+            <div className="w-full h-48 rounded-t-lg overflow-hidden bg-gray-100">
                 {imageSrc ? (
                     <img 
                         src={imageSrc}
@@ -35,8 +35,8 @@ export default function TableList({ products, onOpen, onDelete }) {
                         className="w-full h-full object-cover"
                     />
                 ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="w-full h-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </div>
@@ -60,64 +60,58 @@ export default function TableList({ products, onOpen, onDelete }) {
 
     return (
         <>
-            <div className="overflow-x-auto mt-10">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>SKU</th>
-                            <th>Brand</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="hover">
-                        {products.map((product) => (
-                            <tr key={product._id} className="hover">
-                                <td>
-                                    <ImageComponent 
-                                        imageUrl={product.imageUrl} 
-                                        productName={product.name}
-                                    />
-                                </td>
-                                <td className="text-xs">{product._id}</td>
-                                <td>{product.name}</td>
-                                <td>{product.description || '-'}</td>
-                                <td>{product.sku || '-'}</td>
-                                <td>{product.brand || '-'}</td>
-                                <td>${product.price || product.basePrice}</td>
-                                <td>
-                                    <button
-                                        className={`btn btn-sm rounded-full w-20 ${product.inStock ? 'btn-primary' : 'btn-outline btn-primary'}`}>
-                                        {product.inStock ? 'In Stock' : 'Out Stock'}
-                                    </button>
-                                </td>
-                                <td className="text-xs">{formatDate(product.createdAt)}</td>
-                                <td className="text-xs">{formatDate(product.updatedAt)}</td>
-                                <td className="flex gap-2">
-                                    <button 
-                                        className="btn btn-sm btn-secondary" 
-                                        onClick={() => onOpen(product)}
-                                    >
-                                        Update
-                                    </button>
-                                    <button 
-                                        className="btn btn-sm btn-error"
-                                        onClick={() => handleDeleteClick(product)}
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10">
+                {products.map((product) => (
+                    <div key={product._id} className="card bg-base-100 shadow-xl">
+                        <ImageComponent 
+                            imageUrl={product.imageUrl} 
+                            productName={product.name}
+                        />
+                        <div className="card-body">
+                            <div className="flex justify-between items-start">
+                                <h2 className="card-title text-lg">{product.name}</h2>
+                                <div className="badge badge-lg">
+                                    ${product.price || product.basePrice}
+                                </div>
+                            </div>
+                            
+                            <p className="text-sm text-gray-600 line-clamp-2">
+                                {product.description || 'No description available'}
+                            </p>
+
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {product.sku && (
+                                    <div className="badge badge-outline">
+                                        SKU: {product.sku}
+                                    </div>
+                                )}
+                                {product.brand && (
+                                    <div className="badge badge-outline">
+                                        {product.brand}
+                                    </div>
+                                )}
+                                <div className={`badge ${product.inStock ? 'badge-primary' : 'badge-ghost'}`}>
+                                    {product.inStock ? 'In Stock' : 'Out of Stock'}
+                                </div>
+                            </div>
+
+                            <div className="card-actions justify-end mt-4">
+                                <button 
+                                    className="btn btn-sm btn-secondary" 
+                                    onClick={() => onOpen(product)}
+                                >
+                                    Edit
+                                </button>
+                                <button 
+                                    className="btn btn-sm btn-error"
+                                    onClick={() => handleDeleteClick(product)}
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Modal de confirmación */}
