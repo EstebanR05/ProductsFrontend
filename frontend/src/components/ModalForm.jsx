@@ -28,7 +28,7 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 description: product.description || '',
                 sku: product.sku || '',
                 brand: product.brand || '',
-                price: product.price || product.basePrice || '',
+                price: product.basePrice || product.price || '',
                 inStock: product.inStock || false,
                 imageUrl: product.imageUrl || '',
             });
@@ -124,6 +124,18 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                         />
                     </div>
 
+                    <div className="form-control col-span-2">
+                        <label className="label">
+                            <span className="label-text">Description</span>
+                        </label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleInputChange}
+                            className="textarea textarea-bordered h-24"
+                        />
+                    </div>
+
                     <div className="form-control">
                         <label className="label">
                             <span className="label-text">SKU</span>
@@ -161,18 +173,6 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                             onChange={handleInputChange}
                             className="input input-bordered"
                             required
-                        />
-                    </div>
-
-                    <div className="form-control col-span-2">
-                        <label className="label">
-                            <span className="label-text">Description</span>
-                        </label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            className="textarea textarea-bordered h-24"
                         />
                     </div>
 

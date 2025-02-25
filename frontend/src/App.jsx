@@ -17,37 +17,37 @@ function App() {
 
     const handleSubmit = async (formData) => {
         try {
-            if (modalMode === 'add') {
-                const response = await fetch('http://localhost:4000/api/products', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-                
-                if (!response.ok) throw new Error('Error creating product');
-                
-            } else {
-                const response = await fetch(`http://localhost:4000/api/products/${selectedProduct._id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-                
-                if (!response.ok) throw new Error('Error updating product');
+            const apiData = {
+                name: formData.name,
+                description: formData.description,
+                sku: formData.sku,
+                basePrice: Number(formData.price),
+                brand: formData.brand,
+                inStock: formData.inStock,
+                stock: formData.inStock,
+                imageUrl: formData.imageUrl
+            };
+
+            const response = await fetch(`http://localhost:4000/api/products${modalMode === 'edit' ? `/${selectedProduct._id}` : ''}`, {
+                method: modalMode === 'add' ? 'POST' : 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(apiData),
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Error processing request');
             }
 
-            // Cerrar modal y refrescar la tabla
             setIsOpen(false);
-            // Forzar actualización de la tabla
             window.location.reload();
             
         } catch (error) {
             console.error('Error:', error);
-            alert('There was an error processing your request');
+            alert(error.message || 'There was an error processing your request');
         }
     };
 

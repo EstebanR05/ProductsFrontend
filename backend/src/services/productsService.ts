@@ -27,7 +27,13 @@ export const createProductService = async (req: Request, res: Response) => {
         const newProduct = new productSchema(req.body);
         const savedProduct = await newProduct.save();
         return res.status(201).json(savedProduct);
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 11000 && error.keyPattern?.sku) {
+            return res.status(400).json({
+                message: 'A product with this SKU already exists',
+                field: 'sku'
+            });
+        }
         return handleError(res, error, 'Error creating product');
     }
 };
@@ -37,13 +43,19 @@ export const updateProductService = async (req: Request, res: Response) => {
         const updatedProduct = await productSchema.findByIdAndUpdate(
             req.params.id,
             req.body,
-            { new: true }
+            { new: true, runValidators: true }
         );
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
         return res.json(updatedProduct);
-    } catch (error) {
+    } catch (error: any) {
+        if (error.code === 11000 && error.keyPattern?.sku) {
+            return res.status(400).json({
+                message: 'A product with this SKU already exists',
+                field: 'sku'
+            });
+        }
         return handleError(res, error, 'Error updating product');
     }
 };
