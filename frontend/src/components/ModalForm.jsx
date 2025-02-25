@@ -89,10 +89,11 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={onClose}>✕</button>
                 <h3 className="font-bold text-lg py-4">{mode === 'edit' ? 'Edit Product' : 'Add New Product'}</h3>
                 
-                <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2 flex justify-center mb-4">
-                        <label className="cursor-pointer">
-                            <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden relative group hover:border-primary">
+                <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-6">
+                    {/* Primera columna: Imagen */}
+                    <div className="col-span-1">
+                        <label className="cursor-pointer block">
+                            <div className="w-full aspect-square border-2 border-dashed border-gray-300 rounded-lg overflow-hidden relative group hover:border-primary">
                                 <div className="w-full h-full flex items-center justify-center">
                                     {imagePreview ? (
                                         <img 
@@ -127,86 +128,107 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                         </label>
                     </div>
 
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Name</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            className="input input-bordered"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-control col-span-2">
-                        <label className="label">
-                            <span className="label-text">Description</span>
-                        </label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleInputChange}
-                            className="textarea textarea-bordered h-24"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">SKU</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="sku"
-                            value={formData.sku}
-                            onChange={handleInputChange}
-                            className="input input-bordered"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Brand</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="brand"
-                            value={formData.brand}
-                            onChange={handleInputChange}
-                            className="input input-bordered"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Price</span>
-                        </label>
-                        <input
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            className="input input-bordered"
-                            required
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text">In Stock</span>
+                    {/* Segunda y tercera columna: Formulario */}
+                    <div className="col-span-2 grid grid-cols-2 gap-4">
+                        {/* Name */}
+                        <div className="form-control w-full col-span-2">
+                            <label className="label">
+                                <span className="label-text">Name</span>
+                            </label>
                             <input
-                                type="checkbox"
-                                name="inStock"
-                                checked={formData.inStock}
+                                type="text"
+                                name="name"
+                                value={formData.name}
                                 onChange={handleInputChange}
-                                className="checkbox checkbox-primary"
+                                className="input input-bordered w-full"
+                                required
                             />
-                        </label>
+                        </div>
+
+                        {/* SKU y Brand */}
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text">SKU</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="sku"
+                                value={formData.sku}
+                                onChange={handleInputChange}
+                                className="input input-bordered w-full"
+                            />
+                        </div>
+
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text">Brand</span>
+                            </label>
+                            <input
+                                type="text"
+                                name="brand"
+                                value={formData.brand}
+                                onChange={handleInputChange}
+                                className="input input-bordered w-full"
+                            />
+                        </div>
+
+                        {/* Price e In Stock en la misma fila */}
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text">Price</span>
+                            </label>
+                            <input
+                                type="number"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                                className="input input-bordered w-full"
+                                required
+                            />
+                        </div>
+
+                        {/* Stock Status */}
+                        <div className="form-control w-full">
+                            <label className="label">
+                                <span className="label-text">Stock Status</span>
+                            </label>
+                            <div 
+                                className="input input-bordered w-full h-12 flex items-center cursor-pointer hover:border-primary transition-colors"
+                                onClick={() => {
+                                    const newValue = !formData.inStock;
+                                    setFormData(prev => ({ ...prev, inStock: newValue }));
+                                }}
+                            >
+                                <div className="flex items-center gap-3 w-full px-1">
+                                    <div 
+                                        className={`checkbox checkbox-primary ${formData.inStock ? 'checkbox-checked' : ''}`}
+                                        role="checkbox"
+                                        aria-checked={formData.inStock}
+                                    />
+                                    <span className={`text-sm ${formData.inStock ? 'text-primary' : 'text-gray-600'}`}>
+                                        {formData.inStock ? 'In Stock' : 'Out of Stock'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="form-control w-full col-span-2">
+                            <label className="label">
+                                <span className="label-text">Description</span>
+                            </label>
+                            <textarea
+                                name="description"
+                                value={formData.description}
+                                onChange={handleInputChange}
+                                className="textarea textarea-bordered h-24 w-full"
+                                placeholder="Enter product description..."
+                            />
+                        </div>
                     </div>
 
-                    <div className="col-span-2 flex justify-end gap-2 mt-4">
+                    {/* Botones de acción */}
+                    <div className="col-span-3 flex justify-end gap-2 mt-4">
                         <button type="button" className="btn btn-ghost" onClick={onClose}>
                             Cancel
                         </button>
