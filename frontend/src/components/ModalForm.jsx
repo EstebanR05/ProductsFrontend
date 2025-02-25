@@ -98,31 +98,40 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                     {/* Primera columna: Imagen */}
                     <div className="col-span-1">
                         <label className="cursor-pointer block">
-                            <div className="w-full aspect-square border-2 border-dashed border-gray-300 rounded-lg overflow-hidden relative group hover:border-primary">
-                                <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-full aspect-square border-2 border-dashed border-base-300 rounded-lg overflow-hidden relative group hover:border-primary">
+                                <div className="w-full h-full flex items-center justify-center bg-base-200">
                                     {imagePreview ? (
-                                        <img 
-                                            src={imagePreview}
-                                            alt="Preview" 
-                                            className="w-full h-full object-cover"
-                                        />
+                                        <div className="w-full h-full relative group">
+                                            <img 
+                                                src={imagePreview}
+                                                alt="Preview" 
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                style={{
+                                                    imageRendering: 'crisp-edges',
+                                                    objectPosition: 'center',
+                                                    backfaceVisibility: 'hidden',
+                                                }}
+                                            />
+                                            {/* Overlay con gradiente para mejor legibilidad */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-base-300/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                            
+                                            {/* Overlay de hover con efecto de cristal */}
+                                            <div className="absolute inset-0 bg-base-300/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-base-content mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                                </svg>
+                                                <span className="text-sm text-base-content">Change Image</span>
+                                            </div>
+                                        </div>
                                     ) : (
-                                        <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <div className="w-full h-full flex flex-col items-center justify-center gap-3 group-hover:scale-105 transition-transform duration-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                                             </svg>
-                                            <span className="text-sm text-gray-500">Click to upload</span>
+                                            <span className="text-sm text-base-content/50">Click to upload image</span>
                                         </div>
                                     )}
                                 </div>
-
-                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                    </svg>
-                                    <span className="text-white text-sm">Change Image</span>
-                                </div>
-
                                 <input
                                     type="file"
                                     accept="image/*"
