@@ -1,4 +1,5 @@
 import daisyui from "daisyui"
+import daisyuiThemes from "daisyui/src/theming/themes"
 
 
 /** @type {import('tailwindcss').Config} */
@@ -10,12 +11,12 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [daisyui],
   daisyui: {
     themes: [
       {
         light: {
-          ...require("daisyui/src/theming/themes")["light"],
+          ...daisyuiThemes["light"],
           "base-100": "#f7f7f7",
           "base-200": "#eaeaea",
           "base-300": "#e0e0e0",
@@ -31,7 +32,7 @@ export default {
           error: "#ef4444",
         },
         dark: {
-          ...require("daisyui/src/theming/themes")["dark"],
+          ...daisyuiThemes["dark"],
           "base-100": "#1e1e2a",
           "base-200": "#16161f",
           "base-300": "#0f0f16",
