@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import TableList from './components/TableList'
 import ModalForm from './components/ModalForm';
 import { useState, useEffect } from 'react';
+import { showSuccess, showError, showConfirm } from './utils/notifications';
+import { ENDPOINTS } from './config/constants';
 
 function App() {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,12 +14,10 @@ function App() {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Fetch productos
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    // Efecto para filtrar productos
     useEffect(() => {
         if (searchTerm === '') {
             setFilteredProducts(products);
@@ -34,12 +34,13 @@ function App() {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:4000/api/products');
+            const response = await fetch(ENDPOINTS.PRODUCTS);
             const data = await response.json();
             setProducts(data);
             setFilteredProducts(data);
         } catch (error) {
             console.error('Error fetching products:', error);
+            showError('Error loading products');
         }
     };
 
@@ -66,13 +67,16 @@ function App() {
                 imageUrl: formData.imageUrl
             };
 
-            const response = await fetch(`http://localhost:4000/api/products${modalMode === 'edit' ? `/${selectedProduct._id}` : ''}`, {
-                method: modalMode === 'add' ? 'POST' : 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(apiData),
-            });
+            const response = await fetch(
+                `${ENDPOINTS.PRODUCTS}${modalMode === 'edit' ? `/${selectedProduct._id}` : ''}`, 
+                {
+                    method: modalMode === 'add' ? 'POST' : 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(apiData),
+                }
+            );
             
             const data = await response.json();
             
@@ -81,17 +85,25 @@ function App() {
             }
 
             setIsOpen(false);
-            fetchProducts(); // Recargar productos en lugar de recargar la página
+            fetchProducts();
+            showSuccess(modalMode === 'add' ? 'Product created successfully' : 'Product updated successfully');
             
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message || 'There was an error processing your request');
+            showError(error.message || 'There was an error processing your request');
         }
     };
 
     const handleDelete = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:4000/api/products/${productId}`, {
+            const confirmed = await showConfirm(
+                'Are you sure?',
+                'This action cannot be undone!'
+            );
+
+            if (!confirmed) return;
+
+            const response = await fetch(`${ENDPOINTS.PRODUCTS}/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,12 +116,12 @@ function App() {
                 throw new Error(data.message || 'Error deleting product');
             }
 
-            fetchProducts(); // Recargar productos después de eliminar
-            alert('Product deleted successfully');
+            fetchProducts();
+            showSuccess('Product deleted successfully');
             
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message || 'Error deleting product');
+            showError(error.message || 'Error deleting product');
         }
     };
 

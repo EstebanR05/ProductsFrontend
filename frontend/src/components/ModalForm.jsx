@@ -31,7 +31,6 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                 imageUrl: product.imageUrl || '',
             });
 
-            // Cargar la imagen del localStorage si existe
             if (product.imageUrl) {
                 const storedImage = localStorage.getItem(`product-image-${product.imageUrl}`);
                 if (storedImage) {
@@ -53,16 +52,13 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
         const file = e.target.files[0];
         if (file) {
             try {
-                // Crear un nombre de archivo único
                 const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-                
-                // Crear preview y guardar la imagen como base64
+
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const base64String = reader.result;
-                    // Guardar en localStorage para persistencia
                     localStorage.setItem(`product-image-${fileName}`, base64String);
-                    
+
                     setImagePreview(base64String);
                     setFormData(prev => ({
                         ...prev,
@@ -70,7 +66,7 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                     }));
                 };
                 reader.readAsDataURL(file);
-                
+
             } catch (error) {
                 console.error('Error processing image:', error);
                 alert('Error processing image');
@@ -86,25 +82,24 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
     return (
         <dialog id="my_modal_3" className="modal bg-black/40" open={isOpen}>
             <div className="modal-box max-w-3xl">
-                <button 
-                    className="btn btn-sm btn-circle bg-base-200 hover:bg-base-300 text-base-content border-0 absolute right-2 top-2" 
+                <button
+                    className="btn btn-sm btn-circle bg-base-200 hover:bg-base-300 text-base-content border-0 absolute right-2 top-2"
                     onClick={onClose}
                 >
                     ✕
                 </button>
                 <h3 className="font-bold text-lg py-4">{mode === 'edit' ? 'Edit Product' : 'Add New Product'}</h3>
-                
+
                 <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-6">
-                    {/* Primera columna: Imagen */}
                     <div className="col-span-1">
                         <label className="cursor-pointer block">
                             <div className="w-full aspect-square border-2 border-dashed border-base-300 rounded-lg overflow-hidden relative group hover:border-primary">
                                 <div className="w-full h-full flex items-center justify-center bg-base-200">
                                     {imagePreview ? (
                                         <div className="w-full h-full relative group">
-                                            <img 
+                                            <img
                                                 src={imagePreview}
-                                                alt="Preview" 
+                                                alt="Preview"
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                                 style={{
                                                     imageRendering: 'crisp-edges',
@@ -112,10 +107,8 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                                                     backfaceVisibility: 'hidden',
                                                 }}
                                             />
-                                            {/* Overlay con gradiente para mejor legibilidad */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-base-300/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                            
-                                            {/* Overlay de hover con efecto de cristal */}
+
                                             <div className="absolute inset-0 bg-base-300/30 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-base-content mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -142,9 +135,7 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                         </label>
                     </div>
 
-                    {/* Segunda y tercera columna: Formulario */}
                     <div className="col-span-2 grid grid-cols-2 gap-4">
-                        {/* Name */}
                         <div className="form-control w-full col-span-2">
                             <label className="label">
                                 <span className="label-text">Name</span>
@@ -159,7 +150,6 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                             />
                         </div>
 
-                        {/* SKU y Brand */}
                         <div className="form-control w-full">
                             <label className="label">
                                 <span className="label-text">SKU</span>
@@ -186,7 +176,6 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                             />
                         </div>
 
-                        {/* Price e In Stock en la misma fila */}
                         <div className="form-control w-full">
                             <label className="label">
                                 <span className="label-text">Price</span>
@@ -201,12 +190,11 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                             />
                         </div>
 
-                        {/* Stock Status */}
                         <div className="form-control w-full">
                             <label className="label">
                                 <span className="label-text">Stock Status</span>
                             </label>
-                            <div 
+                            <div
                                 className="input input-bordered w-full h-12 flex items-center cursor-pointer hover:border-primary transition-colors"
                                 onClick={() => {
                                     const newValue = !formData.inStock;
@@ -214,7 +202,7 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                                 }}
                             >
                                 <div className="flex items-center gap-3 w-full px-1">
-                                    <div 
+                                    <div
                                         className={`checkbox checkbox-primary ${formData.inStock ? 'checkbox-checked' : ''}`}
                                         role="checkbox"
                                         aria-checked={formData.inStock}
@@ -226,7 +214,6 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                             </div>
                         </div>
 
-                        {/* Description */}
                         <div className="form-control w-full col-span-2">
                             <label className="label">
                                 <span className="label-text">Description</span>
@@ -241,17 +228,16 @@ export default function ModalForm({ isOpen, onClose, mode, onSubmit, product }) 
                         </div>
                     </div>
 
-                    {/* Botones de acción */}
                     <div className="col-span-3 flex justify-end gap-2 mt-4">
-                        <button 
-                            type="button" 
+                        <button
+                            type="button"
                             className="btn bg-base-200 hover:bg-base-300 text-base-content border-0 transition-colors"
                             onClick={onClose}
                         >
                             Cancel
                         </button>
-                        <button 
-                            type="submit" 
+                        <button
+                            type="submit"
                             className="btn bg-primary/10 text-primary hover:bg-primary/20 border-0 transition-colors"
                         >
                             {mode === 'edit' ? 'Save Changes' : 'Create Product'}
